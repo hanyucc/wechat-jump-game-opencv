@@ -45,3 +45,5 @@ python3 semi_auto_play.py
 <a href="https://www.codecogs.com/eqnedit.php?latex=x&plus;\sqrt{3}y" target="_blank"><img src="https://latex.codecogs.com/gif.latex?x&plus;\sqrt{3}y" title="x+\sqrt{3}y" /></a>
 
 与长按时间的关系，以达到用坐标之差计算长按时间的效果。
+
+使用Canny与HoughLinesP检测矩形，使用HoughCircles检测圆形。
