@@ -30,6 +30,13 @@ def angle(line):
     return math.atan2(abs(line[1] - line[3]), abs(line[0] - line[2]))
 
 
+def similar(s1, s2, s3):
+    if abs(s1[0] - s2[0]) < 30 and abs(s2[0] - s3[0]) < 30 and abs(s1[0] - s3[0]) < 30:
+        if abs(s1[1] - s2[1]) < 30 and abs(s2[1] - s3[1]) < 30 and abs(s1[1] - s3[1]) < 30:
+            return True
+    return False
+
+
 def canny_rectangle_detector(img):
     edges = cv2.Canny(img, 20, 80)
     edges = cv2.dilate(edges, None)
@@ -54,12 +61,6 @@ def canny_rectangle_detector(img):
     return [[possible_lines[0][0], possible_lines[0][3]]]
 
 
-def similar(s1, s2):
-    if abs(s1[0] - s2[0]) < 30 and abs(s1[1] - s2[1]) < 30:
-        return True
-    return False
-
-
 def find_square(img):
     img = cv2.resize(img, None, fx=1, fy=3 ** 0.5)
 
@@ -68,16 +69,15 @@ def find_square(img):
     squares.extend(canny_rectangle_detector(img[:, :, 0]))
     squares.extend(canny_rectangle_detector(img[:, :, 1]))
     squares.extend(canny_rectangle_detector(img[:, :, 2]))
+    squares.extend(canny_rectangle_detector(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)))
 
     squares.sort(key=lambda x: x[1])
 
     if len(squares) == 3:
-        if similar(squares[0], squares[1]):
+        if similar(squares[0], squares[1], squares[2]) or similar(squares[0], squares[1], squares[3]) or similar(squares[0], squares[2], squares[3]):
             return [squares[0][0], squares[0][1] / 3 ** 0.5]
-        elif similar(squares[1], squares[2]):
+        elif similar(squares[1], squares[2], squares[3]):
             return [squares[1][0], squares[1][1] / 3 ** 0.5]
-        elif similar(squares[2], squares[0]):
-            return [squares[2][0], squares[2][1] / 3 ** 0.5]
     elif len(squares) != 0:
         return [squares[0][0], squares[0][1] / 3 ** 0.5]
 
@@ -100,14 +100,13 @@ def find_circle(img):
     circles.extend(hough_circle_detector(img[:, :, 0]))
     circles.extend(hough_circle_detector(img[:, :, 1]))
     circles.extend(hough_circle_detector(img[:, :, 2]))
+    circles.extend(hough_circle_detector(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)))
 
-    if len(circles) == 3:
-        if similar(circles[0], circles[1]):
+    if len(circles) == 4:
+        if similar(circles[0], circles[1], circles[2]) or similar(circles[0], circles[1], circles[3]) or similar(circles[0], circles[2], circles[3]):
             return [circles[0][0], circles[0][1] / 3 ** 0.5]
-        elif similar(circles[1], circles[2]):
+        elif similar(circles[1], circles[2], circles[3]):
             return [circles[1][0], circles[1][1] / 3 ** 0.5]
-        elif similar(circles[2], circles[0]):
-            return [circles[2][0], circles[2][1] / 3 ** 0.5]
     elif len(circles) != 0:
         return [circles[0][0], circles[0][1] / 3 ** 0.5]
 
