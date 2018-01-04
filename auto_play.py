@@ -12,13 +12,13 @@ def get_screenshot():
 
 def move_player(curr_x, curr_y, next_x, next_y):
     dist = 3 ** 0.5 * abs(next_y - curr_y) + abs(next_x - curr_x)
-    dist = int(dist ** 0.85 * 1.65)
+    dist = int(dist ** 0.9 * 1.13)
     os.system('adb shell input touchscreen swipe 200 200 200 200 ' + str(dist))
 
 
 def find_player(img):
     circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1, 100,
-                               param1=50, param2=40, minRadius=40, maxRadius=60)
+                               param1=50, param2=30, minRadius=40, maxRadius=60)
     return circles[0][0]
 
 
@@ -31,10 +31,10 @@ def angle(line):
 
 
 def canny_rectangle_detector(img):
-    edges = cv2.Canny(img, 20, 70)
+    edges = cv2.Canny(img, 20, 80)
     edges = cv2.dilate(edges, None)
 
-    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 200, minLineLength=200, maxLineGap=2)
+    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 200, minLineLength=200, maxLineGap=20)
     possible_lines = list()
 
     if lines is None:
