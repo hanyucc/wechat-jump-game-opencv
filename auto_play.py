@@ -3,6 +3,7 @@ import os
 import numpy as np
 import time
 import math
+import random
 
 
 def get_screenshot():
@@ -115,7 +116,7 @@ def find_circle(img):
 
 def main():
     while True:
-        time.sleep(1.5)
+        time.sleep(1.5 + 1.5 * random.random())
 
         img = get_screenshot()
         img = cv2.resize(img, None, fx=1.5, fy=1.5)
