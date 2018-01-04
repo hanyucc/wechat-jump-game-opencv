@@ -18,7 +18,7 @@ def move_player(curr_x, curr_y, next_x, next_y):
 
 def find_player(img):
     circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1, 100,
-                               param1=30, param2=30, minRadius=20, maxRadius=60)
+                               param1=50, param2=40, minRadius=40, maxRadius=60)
     return circles[0][0]
 
 
@@ -31,7 +31,7 @@ def angle(line):
 
 
 def canny_rectangle_detector(img):
-    edges = cv2.Canny(img, 40, 80)
+    edges = cv2.Canny(img, 20, 70)
     edges = cv2.dilate(edges, None)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 200, minLineLength=200, maxLineGap=2)
@@ -55,7 +55,7 @@ def canny_rectangle_detector(img):
 
 
 def similar(s1, s2):
-    if abs(s1[0] - s2[0]) < 10 and abs(s1[1] - s2[1]) < 10:
+    if abs(s1[0] - s2[0]) < 30 and abs(s1[1] - s2[1]) < 30:
         return True
     return False
 
@@ -68,6 +68,8 @@ def find_square(img):
     squares.extend(canny_rectangle_detector(img[:, :, 0]))
     squares.extend(canny_rectangle_detector(img[:, :, 1]))
     squares.extend(canny_rectangle_detector(img[:, :, 2]))
+
+    squares.sort(key=lambda x: x[1])
 
     if len(squares) == 3:
         if similar(squares[0], squares[1]):
@@ -84,7 +86,7 @@ def find_square(img):
 
 def hough_circle_detector(img):
     circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1, 100,
-                               param1=30, param2=40, minRadius=50, maxRadius=300)
+                               param1=30, param2=30, minRadius=60, maxRadius=0)
 
     return [] if circles is None else [circles[0][0]]
 
@@ -124,8 +126,6 @@ def main():
         coords = find_player(blur[400:2000, :])  # use grayscale image here
         coords = coords.astype('int')
 
-        cv2.circle(blur, (coords[0], coords[1] + 400), coords[2], 0, 3)
-
         coords[1] += 660
         curr_x, curr_y = coords[0], coords[1]
 
@@ -139,7 +139,7 @@ def main():
             move_player(curr_x, curr_y, next_x, next_y)
             continue
 
-        circle = find_circle(img[1000:coords[1] + 200, :])
+        circle = find_circle(img[1000:coords[1] - 50, :])
         if circle is not None:
             next_x = int(circle[0])
             next_y = int(circle[1] + 1000)
@@ -150,7 +150,6 @@ def main():
         if next_x == -1 or next_y == -1:
             print('nothing detected\n')
             break
-
 
 
 if __name__ == '__main__':
