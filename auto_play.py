@@ -13,7 +13,7 @@ def get_screenshot():
 
 def move_player(curr_x, curr_y, next_x, next_y):
     dist = 3 ** 0.5 * abs(next_y - curr_y) + abs(next_x - curr_x)
-    dist = int(dist ** 0.9 * 1.13)
+    dist = int(dist ** 0.9 * 1.05)
     os.system('adb shell input touchscreen swipe 200 200 200 200 ' + str(dist))
 
 
